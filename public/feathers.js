@@ -1,0 +1,1 @@
+../node_modules/feathers-client/dist/feathers.js

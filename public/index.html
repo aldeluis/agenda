@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Agenda</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+</head>
+<body>
+  <style type="text/css">
+    h1 {text-align: center;}
+    .done {color: lightgrey;}
+    #entrada {position:fixed; bottom:0px; width:inherit; background-color: rgba(255,255,255,.95);}
+    #cabecera {position:sticky; top:0px; z-index:1; background-color: rgba(255,255,255,.95);}
+    .delete {
+      position: absolute;
+      right: 20px;
+      margin-top: -3px;
+      z-index: 0;
+      }
+    [type="checkbox"] + label {
+      margin-right:30px;
+      word-break:break-all;
+      }
+    
+  </style>
+
+
+  <div class="container" id="todos">
+  	<div id="cabecera"><h1>Teléfonos<span id="typing"></span></h1></div>
+  	<ul class="todos collection with-header">
+		</ul>
+		
+		<div id="entrada">
+		  <form role="form" class="create-todo">
+			  <input type="text" class="form-control" name="text" placeholder="Nombre Telefonos...">
+		  </form>
+	  </div>
+		
+	</div>
+
+
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="//cdn.socket.io/socket.io-1.3.7.js"></script>
+  <script src="feathers.js"></script>
+  <script src="todo-client.js"></script>
+	<script type="text/javascript">
+		function escribiendo(element) {
+			console.log("escribiendo");
+			var t = 3;
+			var to=null;
+			function actualiza(){
+					clearTimeout(to);
+					this.to = setTimeOut(function(){console.log(t)},1000);
+				}
+			actualiza();
+			};
+			
+			return actualiza();
+			};
+		var input = document.getElementsByName("text")[0];
+		var marca = document.getElementById("typing");
+		input.addEventListener("keyup",function(){escribiendo(marca)},false);
+	</script>
+	</script>
+</body>
+</html>

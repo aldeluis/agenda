@@ -1,0 +1,26 @@
+{
+  "name": "agenda",
+  "version": "1.0.0",
+  "description": "proyecto de agenda con nodejs y feathersjs",
+  "main": "app.js",
+  "dependencies": {
+    "feathers": "^2.0.0",
+    "feathers-knex": "^2.1.0",
+    "feathers-rest": "^1.2.2",
+    "pg": "^4.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aldeluis/agenda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aldeluis/agenda/issues"
+  },
+  "homepage": "https://github.com/aldeluis/agenda#readme"
+}
