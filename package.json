@@ -2,12 +2,15 @@
   "name": "agenda",
   "version": "1.0.0",
   "description": "proyecto de agenda con nodejs y feathersjs",
-  "main": "app.js",
+  "main": "server.js",
   "dependencies": {
-    "feathers": "^2.0.0",
-    "feathers-knex": "^2.1.0",
-    "feathers-rest": "^1.2.2",
-    "pg": "^4.4.6"
+		"body-parser": "^1.15.1",
+    "feathers": "^2.0.1",
+    "feathers-knex": "^2.1.3",
+    "feathers-rest": "^1.4.2",
+		"feathers-socketio": "^1.4.1",
+		"knex": "^0.11.5",
+    "pg": "^5.1.0"
   },
   "devDependencies": {},
   "scripts": {
