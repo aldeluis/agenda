@@ -72,7 +72,7 @@ db.schema.createTableIfNotExists('Personas',function(table){
   table.date('f_creac');
   table.date('f_vigen');
   table.date('u_modif_id').references('id').inTable('Personas');
-});
+}).return();
 
 // Sólo inserta datos si no hay datos
 db("Personas").select().count().then(function(r){
