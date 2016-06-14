@@ -1,21 +1,20 @@
 var feathers = require('feathers');
-var rest = require('feathers-rest');
-var bodyParser = require('body-parser');
-var service = require('feathers-knex');
+var handler = require('feathers-errors/handler');
 var socketio = require('feathers-socketio');
+var service = require('feathers-knex');
 var db = require('./modelo.js')
 
+// Create a feathers instance.
 var app = feathers()
+  // Setup the public folder
   .use(feathers.static(__dirname+'/public'))
-  .configure(rest())
+  // Enable Socket.io
   .configure(socketio())
-  .configure(rest())
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({extended: true}))
 
+// Connect to the db, create and register a Feathers service.
 app.use('/todos', service({Model: db, name: 'todos'}));
-app.use('/campos', service({Model: db, name: 'Campos'}));
 
+// Start the server
 var port = 80;
 app.listen(port, function() {
     console.log('Feathers server listening on port ' + port);
