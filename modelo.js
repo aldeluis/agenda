@@ -4,32 +4,57 @@ var db = require('knex')({
   searchPath: 'public'
 });
 
-// Sólo crea la tabla si no existe
-db.schema.createTableIfNotExists('todos',function(table) {
+// Sólo crea las tabla si no existen e inserta datos si están vacias
+
+db.schema.createTableIfNotExists('todos', function(table) {
+  // ESTRUCTURA DE LA TABLA
   table.increments('id');
   table.string('text');
   table.boolean('complete');
-}).return();
+  //
+})
+.then(function(){
+  return db('todos').select().count().then(function(r){
+    if (r[0].count==0) {
+      console.log("tabla todos vacia, insertamos datos predefinidos.");
+      return db('todos').insert([
+        // DATOS PREDEFINIDOS
+        {text:"inserción automática 1", complete:true},
+        {text:"inserción automática 2", complete:true},
+        //
+      ]);
+    }
+    else {
+      return console.log("La tabla todos no está vacia: conservamos los datos.")
+    }
+  });
+});
 
-// Sólo crea la tabla si no existe
-db.schema.createTableIfNotExists('Modulos',function(table){
+db.schema.createTableIfNotExists('modulos',function(table){
   table.increments('id').primary();
   table.string('nombre'); // ficha que hace referencia
   table.string('ficha'); // modelo de la DB hace referencia
   table.string('model'); // modelo de la DB hace referencia
-}).return();
+})
+.then(function(){
+  return db("modulos").select().count().then(function(r){
+    if (r[0].count==0) {
+      console.log("tabla modulos vacia, insertamos datos predefinidos");
+      return db("modulos").insert([
+        {nombre:"Ficha de Fichas", ficha:"fichaFichas",    model:"Campos"},
+        {nombre:"Personas",        ficha:"fichaPersonas",  model:"Personas"},
+        {nombre:"Entidades",       ficha:"fichaEntidades", model:"Entidades"},
+        {nombre:"Eventos",         ficha:"fichaEventos",   model:"Eventos"},
+      ]);
+    }
+    else {
+      return console.log("La tabla modulos no está vacia: conservamos los datos.");
+    }
+  });
+});
 
-// Sólo inserta datos si no hay datos
-db("Modulos").select().count().then(function(r){
-  if (r[0].count==0) {return db("Modulos").insert([
-    {nombre:"Ficha de Fichas", ficha:"fichaFichas",    model:"Campos"},
-    {nombre:"Personas",        ficha:"fichaPersonas",  model:"Personas"},
-    {nombre:"Entidades",       ficha:"fichaEntidades", model:"Entidades"},
-    {nombre:"Eventos",         ficha:"fichaEventos",   model:"Eventos"}
-  ])}});
 
-// Sólo crea la tabla si no existe
-db.schema.createTableIfNotExists('Campos',function(table){
+db.schema.createTableIfNotExists('campos',function(table){
   table.increments('id').primary();
   table.string('ficha'); // ficha que hace referencia
   table.string('model'); // modelo de la DB hace referencia
@@ -39,27 +64,34 @@ db.schema.createTableIfNotExists('Campos',function(table){
   table.string('etiqu'); // label
   table.string('clase'); // tipo de input del formulario
   table.boolean('enlista'); // tipo de input del formulario
-}).return();
-
-// Sólo inserta datos si no hay datos
-db("Campos").select().count().then(function(r){
-  if (r[0].count==0) {return db("Campos").insert([
-    {ficha:'fichaFichas',   model:'Campos',   orden:'01', posic:'m12', campo:'id',         etiqu:'ID',       clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'02', posic:'m12', campo:'ficha',      etiqu:'Ficha',    clase:'caja',     enlista:1},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'03', posic:'m12', campo:'model',      etiqu:'Modelo',   clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'04', posic:'m12', campo:'orden',      etiqu:'Orden',    clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'05', posic:'m12', campo:'posic',      etiqu:'Posición', clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'06', posic:'m12', campo:'campo',      etiqu:'Campo',    clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'07', posic:'m12', campo:'etiqu',      etiqu:'Etiqueta', clase:'caja',     enlista:0},
-    {ficha:'fichaFichas',   model:'Campos',   orden:'08', posic:'m12', campo:'clase',      etiqu:'Clase',    clase:'combobox', enlista:0},
-    {ficha:'fichaPersonas', model:'Personas', orden:'01', posic:'m12', campo:'nombre',     etiqu:'Nombre',   clase:'cajaLista',enlista:1},
-    {ficha:'fichaPersonas', model:'Personas', orden:'02', posic:'m12', campo:'apellidos',  etiqu:'Apellidos',clase:'caja',     enlista:1},
-    {ficha:'fichaPersonas', model:'Personas', orden:'03', posic:'m12', campo:'nip',        etiqu:'NIP',      clase:'caja',     enlista:0}
-  ])}});
+})
+.then(function(){
+  return db("campos").select().count().then(function(r){
+    if (r[0].count==0) {
+      console.log("tabla campos vacia, insertamos datos predefinidos");
+      return db("campos").insert([
+        {ficha:'fichaFichas',   model:'Campos',   orden:'01', posic:'m12', campo:'id',         etiqu:'ID',       clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'02', posic:'m12', campo:'ficha',      etiqu:'Ficha',    clase:'caja',     enlista:1},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'03', posic:'m12', campo:'model',      etiqu:'Modelo',   clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'04', posic:'m12', campo:'orden',      etiqu:'Orden',    clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'05', posic:'m12', campo:'posic',      etiqu:'Posición', clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'06', posic:'m12', campo:'campo',      etiqu:'Campo',    clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'07', posic:'m12', campo:'etiqu',      etiqu:'Etiqueta', clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'08', posic:'m12', campo:'clase',      etiqu:'Clase',    clase:'combobox', enlista:0},
+        {ficha:'fichaPersonas', model:'Personas', orden:'01', posic:'m12', campo:'nombre',     etiqu:'Nombre',   clase:'cajaLista',enlista:1},
+        {ficha:'fichaPersonas', model:'Personas', orden:'02', posic:'m12', campo:'apellidos',  etiqu:'Apellidos',clase:'caja',     enlista:1},
+        {ficha:'fichaPersonas', model:'Personas', orden:'03', posic:'m12', campo:'nip',        etiqu:'NIP',      clase:'caja',     enlista:0}
+      ]);
+    }
+    else {
+      return console.log("La tabla Campos no está vacia: conservamos los datos.");
+    }
+  });
+});
 
 
 // Sólo crea la tabla si no existe
-db.schema.createTableIfNotExists('Personas',function(table){
+db.schema.createTableIfNotExists('personas',function(table){
   table.increments('id').primary();
   table.string('nombre');
   table.string('apellidos');
@@ -71,14 +103,22 @@ db.schema.createTableIfNotExists('Personas',function(table){
   table.date('f_modif');
   table.date('f_creac');
   table.date('f_vigen');
-  table.date('u_modif_id').references('id').inTable('Personas');
-}).return();
+  table.date('u_modif_id').references('id');
+})
+.then(function(){
+  return db("personas").select().count().then(function(r){
+    if (r[0].count==0) {
+      console.log("tabla personas vacia: insertamos datos predefinidos");
+      return db("personas").insert([
+        {nombre:'Adonay', apellidos:'Sanz'},
+        {nombre:'Bruno',  apellidos:'Maltrás'}
+      ]);
+    }
+    else {
+      return console.log("La tabla Personas no está vacia: conservamos los datos.");
+    }
+  });
+});
 
-// Sólo inserta datos si no hay datos
-db("Personas").select().count().then(function(r){
-  if (r[0].count==0) {return db("Personas").insert([
-    {nombre:'Adonay', apellidos:'Sanz'},
-    {nombre:'Bruno',  apellidos:'Maltrás'}
-  ])}});
 
 module.exports = db;
