@@ -2,55 +2,26 @@
 <html>
 <head>
   <title>Agenda</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <meta name="viewport" content="width=device-width, user-scalable=no">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+  <script src="//cdn.socket.io/socket.io-1.4.5.js"></script>
+  <link rel="stylesheet" href="client.css">
 </head>
 <body>
-  <style type="text/css">
-    h3 {text-align: center;}
-    .done {color: lightgrey;}
-    #entrada {position:fixed; bottom:0px; width:inherit; background-color: rgba(255,255,255,.95);}
-    #cabecera {position:sticky; top:0px; z-index:1; background-color: rgba(255,255,255,.95);}
-    .delete {
-      position: absolute;
-      right: 20px;
-      margin-top: -3px;
-      z-index: 0;
-      }
-    [type="checkbox"] + label {
-      margin-right:30px;
-      word-break:break-all;
-      }
-
-  </style>
-
-
-  <div class="container" id="campos">
-    <div id="cabecera"><h3>Campos</h3><span id="clientes"></span></div>
-    <ul class="campos row collection with-header">
-    </ul>
-  </div>
-
-
   <div class="container" id="todos">
-    <div id="cabecera"><h3>Teléfonos</h3><span id="clientes"></span></div>
-    <ul class="todos collection with-header">
-    </ul>
+    <div id="cabecera"><h3><span class="titulo">datos</span><span id="clientes"></span><span id="conexion">●</span></h3></div>
+    <ul id="innerContainer" class="todos collection with-header"></ul>
     <div id="entrada">
       <form role="form" class="create-todo">
-        <input type="text" class="form-control" name="text" placeholder="Nombre Telefonos...">
+        <input type="text" class="form-control" name="text" placeholder="escriba, no sea tímido...">
       </form>
     </div>
   </div>
-
-
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="//cdn.socket.io/socket.io-1.3.7.js"></script>
   <script src="//cdn.rawgit.com/feathersjs/feathers-client/v1.1.0/dist/feathers.js"></script>
-  <script src="todo-client.js"></script>
-
+  <script src="client.js"></script>
 </body>
 </html>
+
