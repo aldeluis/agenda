@@ -1,7 +1,10 @@
 var socket = io();
 var app = feathers()
   .configure(feathers.socketio(socket));
+
 var todos = app.service('todos');
+var vista = app.service('vista');
+var campos = app.service('campos');
 
 var laststate = null;
 // monitor de conexión con el color del header
@@ -15,90 +18,104 @@ window.setInterval(function(){
     $('input').removeAttr('disabled');
     $(".delete").unbind('click');
     $(".delete").css('color','');
+    bucleReloj();
     }
-    laststate = "green";
-    $("#conexion").css("color","limegreen");
-    }
+  laststate = "green";
+  $("#conexion").css("background-color","limegreen");
+  }
   else {
     laststate = "red";
-    $("#conexion").css("color","red");
+    $("#conexion").css("background-color","red");
     $('input').attr('disabled','disabled');
     $(".delete").click(function(e){e.stopPropagation();})
     $(".delete").css('color','grey');
-    }
-  },500);
+    clearTimeout(bucleHora);
+  }
+},500);
 
-//// Closurización
-//var DOMina = function(container){
-//  return {
-//    get: function(element) {
-//      return container.find('[data-id="'+element.id+'"]');
-//    },
-//    add: function(element) {
-//      var html = '<li class="collection-item col s12 m12 dismissable" data-id="'+element.id+'">'+
-//        '<input type="checkbox" id="checkbox'+element.id+'" name="done">'+
-//        '<label for="checkbox'+element.id+'">'+element.text+'</label>'+
-//        '<a href="javascript://" class="delete"><span class="material-icons right">warning</span></a>'+
-//        '</li>';
-//      container.find('#innerContainer').prepend(html);
-//      this.update(element);
-//    },
-//    remove: function(element) {
-//      this.get(element).remove();
-//    },
-//    update: function(element) {
-//      var node = this.get(element);
-//      var checkbox = node.find('[name="done"]').removeAttr('disabled');
-//      node.find("label").text(element.text);
-//      node.toggleClass('done', element.complete);
-//      checkbox.prop('checked', element.complete);
-//    }
-//  };
-//};
+// actualizador de timestamps
+function actualizaHora() {
+  $('#conexion').text(moment().format('LTS'));
+}
 
-// DOMina(contenedor).add({id:1,text:"tarara"})
-// DOMina(contenedor).get({id:1})
-// DOMina(contenedor).remove({id:1})
-// DOMina(contenedor).update({id:1,complete:true})
+function actualizaTimestamps() {
+$('.Campos .campo2').each(function(i){
+	  $(this).text(moment($(this).attr("data-time")).fromNow(true))
+	})
+}
+
+var bucleHora;
+function bucleReloj () {
+  actualizaHora();
+  actualizaTimestamps();
+  bucleHora = setTimeout(bucleReloj, 1000);
+}
+bucleReloj();
+
+// todos.add({id:1,text:"tarara"})
+// todos.get({id:1})
+// todos.remove({id:1})
+// todos.patch(1,{complete:true})
 
 // eventos externos a los que responde nuestro controlador
 //todos.on('created', addTodo);
 //todos.on('updated', updateTodo);
+//todos.on('patched', updateTodo);
 //todos.on('removed', removeTodo);
+
+//// VISTA ////
+vista.on('created', addCampo);
+//vista.on('updates', updateCampo);
+vista.on('removed', removeCampo);
+
+function addCampo(campo) {
+ var campoHtml = document.createElement(campo.html);
+ campoHtml.className="campo"+campo.id;
+ campoHtml.innerText="relleno";
+ $('.innerCampos').append(campoHtml);
+}
+
+function removeCampo(campo) {
+ $('.campo'+campo.id).remove();
+}
+//// VISTA ////
+
+
+//// TODOS ////
 
 // eventos externos a los que responde nuestro controlador
 todos.on('created', addTodo);
 todos.on('updated', updateTodo);
 todos.on('removed', removeTodo);
-
-//// TODOS
-function getTodoElement(todo) {
-  return $('#todos').find('[data-id="'+todo.id+'"]')
-}
+todos.on('patched', updateTodo);
 
 function addTodo(todo) {
- var html = '<li class="collection-item col s12 m12 dismissable" data-id="'+todo.id+'">'+
-       '<input type="checkbox" id="checkbox'+todo.id+'" name="done">'+
-       '<label for="checkbox'+todo.id+'">'+todo.text+'</label>'+
-       '<a href="javascript://" class="delete"><span class="material-icons right">delete</span></a>'+
+ var html = '<li class="Campos collection-item col s12 m12" data-id="'+todo.id+'">'+
+       '<input id="checkbox'+todo.id+'"class="campo1" type="checkbox" name="done">'+
+       '<label class="campo2" for="checkbox'+todo.id+'"></label>'+
+       '<div class="campo4"></div>'+
+       '<a   class="campo3 delete" href="javascript://"><span class="material-icons right">delete</span></a>'+
        '</li>';
- $('#todos').find('.todos').prepend(html);
+ $('#innerContainer').prepend(html);
  updateTodo(todo);
 }
 
 function updateTodo(todo) {
- var element = getTodoElement(todo);
- var checkbox = element.find('[name="done"]').removeAttr('disabled');
- element.toggleClass('done', todo.complete);
- checkbox.prop('checked', todo.complete);
+ $('[data-id='+todo.id+'] [name="done"]').removeAttr('disabled');
+ $('[data-id='+todo.id+'] .campo1').toggleClass('done', todo.complete);
+ $('[data-id='+todo.id+'] .campo1').prop('checked', todo.complete);
+ $('[data-id='+todo.id+'] .campo4').text(todo.text);
+ $('[data-id='+todo.id+'] .campo2').attr('data-time',todo.updated||todo.created);
+// $('[data-id='+todo.id+'] .campo2').text(moment.from(moment(todo.updated||todo.created)).humanize());
+ 
 }
 
 function removeTodo(todo) {
- getTodoElement(todo).remove();
+ $('#innerContainer').find('[data-id='+todo.id+']').remove();
 }
 
 // envio de formulario
-$('#todos').on('submit', 'form', function (ev) {
+$('.container').on('submit', 'form', function (ev) {
 // si no hay conexión, no hagas la petición
   if (laststate == "green") {
    var field = $(this).find('[name="text"]');
@@ -109,17 +126,17 @@ $('#todos').on('submit', 'form', function (ev) {
 });
 
 // click en borrar
-$('#todos').on('click', '.delete', function (ev) {
+$('#innerContainer').on('click', '.delete', function (ev) {
    var id = $(this).parents('li').data('id');
    todos.remove(id);
    ev.preventDefault();
 });
 
-// click en checkbox
-$('#todos').on('click', '[name="done"]', function(ev) {
+// click en checkbox, deja desactivado el checkbox hasta respuesta
+$('#innerContainer').on('click', '.campo1', function(ev) {
    var id = $(this).parents('li').data('id');
    $(this).attr('disabled', 'disabled');
-   todos.update(id,{complete: $(this).is(':checked')});
+   todos.patch(id,{complete: $(this).is(':checked')});
 });
 
 // Rellena el contenedor
