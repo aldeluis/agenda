@@ -1,4 +1,5 @@
 var db = require('knex')({
+//  debug: true,
   client: 'pg',
   connection:{host:"localhost",user:"test",password:"test",database:"test"},
   searchPath: 'public'
@@ -11,6 +12,8 @@ db.schema.createTableIfNotExists('todos', function(table) {
   table.increments('id');
   table.string('text');
   table.boolean('complete');
+  table.timestamp('created');
+  table.timestamp('updated');
   //
 })
 .then(function(){
@@ -19,8 +22,8 @@ db.schema.createTableIfNotExists('todos', function(table) {
       console.log("tabla todos vacia, insertamos datos predefinidos.");
       return db('todos').insert([
         // DATOS PREDEFINIDOS
-        {text:"inserción automática 1", complete:true},
-        {text:"inserción automática 2", complete:true},
+        {text:"inserción automática 1", complete:true, created:new Date()},
+        {text:"inserción automática 2", complete:true, created:new Date()}
         //
       ]);
     }
@@ -57,7 +60,7 @@ db.schema.createTableIfNotExists('modulos',function(table){
 db.schema.createTableIfNotExists('campos',function(table){
   table.increments('id').primary();
   table.string('ficha'); // ficha que hace referencia
-  table.string('model'); // modelo de la DB hace referencia
+  table.string('model').index(); // modelo de la DB hace referencia
   table.string('orden'); // orden en el que aparece
   table.string('posic'); // posicion dentro de la view
   table.string('campo'); // campo de la base de datos 
@@ -70,21 +73,50 @@ db.schema.createTableIfNotExists('campos',function(table){
     if (r[0].count==0) {
       console.log("tabla campos vacia, insertamos datos predefinidos");
       return db("campos").insert([
-        {ficha:'fichaFichas',   model:'Campos',   orden:'01', posic:'m12', campo:'id',         etiqu:'ID',       clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'02', posic:'m12', campo:'ficha',      etiqu:'Ficha',    clase:'caja',     enlista:1},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'03', posic:'m12', campo:'model',      etiqu:'Modelo',   clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'04', posic:'m12', campo:'orden',      etiqu:'Orden',    clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'05', posic:'m12', campo:'posic',      etiqu:'Posición', clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'06', posic:'m12', campo:'campo',      etiqu:'Campo',    clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'07', posic:'m12', campo:'etiqu',      etiqu:'Etiqueta', clase:'caja',     enlista:0},
-        {ficha:'fichaFichas',   model:'Campos',   orden:'08', posic:'m12', campo:'clase',      etiqu:'Clase',    clase:'combobox', enlista:0},
-        {ficha:'fichaPersonas', model:'Personas', orden:'01', posic:'m12', campo:'nombre',     etiqu:'Nombre',   clase:'cajaLista',enlista:1},
-        {ficha:'fichaPersonas', model:'Personas', orden:'02', posic:'m12', campo:'apellidos',  etiqu:'Apellidos',clase:'caja',     enlista:1},
-        {ficha:'fichaPersonas', model:'Personas', orden:'03', posic:'m12', campo:'nip',        etiqu:'NIP',      clase:'caja',     enlista:0}
+        {ficha:'fichaFichas',   model:'Campos',   orden:'01', posic:'m12', campo:'id',         etiqu:'ID',        clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'02', posic:'m12', campo:'ficha',      etiqu:'Ficha',     clase:'caja',     enlista:1},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'03', posic:'m12', campo:'model',      etiqu:'Modelo',    clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'04', posic:'m12', campo:'orden',      etiqu:'Orden',     clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'05', posic:'m12', campo:'posic',      etiqu:'Posición',  clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'06', posic:'m12', campo:'campo',      etiqu:'Campo',     clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'07', posic:'m12', campo:'etiqu',      etiqu:'Etiqueta',  clase:'caja',     enlista:0},
+        {ficha:'fichaFichas',   model:'Campos',   orden:'08', posic:'m12', campo:'clase',      etiqu:'Clase',     clase:'combobox', enlista:0},
+        {ficha:'fichaPersonas', model:'Personas', orden:'01', posic:'m12', campo:'nombre',     etiqu:'Nombre',    clase:'cajaLista',enlista:1},
+        {ficha:'fichaPersonas', model:'Personas', orden:'02', posic:'m12', campo:'apellidos',  etiqu:'Apellidos', clase:'caja',     enlista:1},
+        {ficha:'fichaPersonas', model:'Personas', orden:'03', posic:'m12', campo:'nip',        etiqu:'NIP',       clase:'caja',     enlista:0},
+        {ficha:'fichaTodos',    model:'Todos',    orden:'01', posic:'',    campo:'',           etiqu:'input',     clase:'checkbox', enlista:0},
+        {ficha:'fichaTodos',    model:'Todos',    orden:'01', posic:'',    campo:'',           etiqu:'label',     clase:'',         enlista:0},
+        {ficha:'fichaTodos',    model:'Todos',    orden:'01', posic:'',    campo:'',           etiqu:'a',         clase:'delete',   enlista:0},
       ]);
     }
     else {
       return console.log("La tabla Campos no está vacia: conservamos los datos.");
+    }
+  });
+});
+
+db.schema.createTableIfNotExists('vista',function(table){
+  table.increments('id').primary();
+  table.string('ficha'); // ficha que hace referencia
+  table.string('model').index(); // modelo de la DB hace referencia
+  table.string('orden'); // orden en el que aparece
+  table.string('campo'); // campo de la base de datos 
+  table.string('html'); // label
+  table.string('class'); // tipo de input del formulario
+  table.boolean('enlista'); // tipo de input del formulario
+})
+.then(function(){
+  return db("vista").select().count().then(function(r){
+    if (r[0].count==0) {
+      console.log("tabla vista vacia, insertamos datos predefinidos");
+      return db("vista").insert([
+        {ficha:'fichaTodos', model:'todos', orden:'10', campo:'complete', html:'input', class:'checkbox', enlista:0},
+        {ficha:'fichaTodos', model:'todos', orden:'20', campo:'text',     html:'label', class:'',         enlista:0},
+        {ficha:'fichaTodos', model:'todos', orden:'30', campo:'',         html:'a',     class:'delete',   enlista:0},
+      ]);
+    }
+    else {
+      return console.log("La tabla vista no está vacia: conservamos los datos.");
     }
   });
 });
