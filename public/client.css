@@ -2,22 +2,56 @@
   display:flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   align-content: center;
-  font-size:3em;
+  list-style: none;
   position:sticky;
   top:0px;
   z-index:1;
   background-color: rgba(255,255,255,.95);
 }
 
+*:focus {
+    outline: none;
+}
+
+nav a{
+  color: black;
+}
+
+nav ul a{
+  color: black;
+}
+
+nav .clock {
+  font-size:1em;
+  font-weight:bold; 
+}
+
+nav {
+  background-color: #ffffff;
+  box-shadow: none;
+}
+
+#titulo {
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: baseline;
+  align-content: center;
+  top:0px;
+  z-index:1;
+  background-color: rgba(255,255,255,.95);
+}
+
+/*
 #conexion {
-  font-size:.3em;
   padding: 10px;
   text-align:right;
   background-color:grey;
   color:white;
   }
+*/
 
 #entrada {position:fixed; bottom:0px; width:inherit; background-color: rgba(255,255,255,.95);}
 
