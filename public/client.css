@@ -11,6 +11,11 @@
   background-color: rgba(255,255,255,.95);
 }
 
+.fila {
+  display:flex;
+  justify-content: inherit;	
+}
+
 *:focus {
     outline: none;
 }
