@@ -5,13 +5,14 @@ var app = feathers()
 var todos = app.service('todos');
 var vista = app.service('vista');
 var campos = app.service('campos');
+var secciones = app.service('secciones');
 
 var laststate = null;
 // monitor de conexión con el color del header
 window.setInterval(function(){
   if (!socket.disconnected) {
     if (laststate == "red") {
-      $('#todos #innerContainer').empty();
+      $('#innerContainer').empty();
       todos.find(function(error,todos){
         todos.forEach(addTodo)
       })
@@ -21,11 +22,11 @@ window.setInterval(function(){
     bucleReloj();
     }
   laststate = "green";
-  $("#conexion").css("background-color","limegreen");
+  $("#conexion").css("color","limegreen");
   }
   else {
     laststate = "red";
-    $("#conexion").css("background-color","red");
+    $("#conexion").css("color","red");
     $('input').attr('disabled','disabled');
     $(".delete").click(function(e){e.stopPropagation();})
     $(".delete").css('color','grey');
@@ -52,16 +53,44 @@ function bucleReloj () {
 }
 bucleReloj();
 
-// todos.add({id:1,text:"tarara"})
+// todos.create({id:1,text:"tarara"})
 // todos.get({id:1})
 // todos.remove({id:1})
 // todos.patch(1,{complete:true})
 
-// eventos externos a los que responde nuestro controlador
-//todos.on('created', addTodo);
-//todos.on('updated', updateTodo);
-//todos.on('patched', updateTodo);
-//todos.on('removed', removeTodo);
+//// SECCIONES ////
+$( document ).ready(function(){$(".button-collapse").sideNav({closeonClick:true});});
+secciones.on('created', addSeccion);
+secciones.on('removed', removeSeccion);
+
+function addSeccion(seccion) {
+  $('#mobile').prepend(" <li><a data-id='"+seccion.id+"' class='botonera' href='#!'>"+seccion.nombre+"</a></li>");
+  $('#desktop').prepend("<li><a data-id='"+seccion.id+"' class='botonera' href='#!'>"+seccion.nombre+"</a></li>");
+}
+
+function removeSeccion(seccion) {
+  $('#mobile #'+seccion.id).remove();
+  $('#desktop #'+seccion.id).remove();
+}
+
+// Rellena la botonera
+secciones.find(function(error, secciones) {
+  secciones.forEach(addSeccion);
+});
+
+// click en botonera
+$('nav').on('click', '.botonera', function (ev) {
+  $(this).parents().siblings().removeClass("active");
+  $(this).parents().toggleClass("active");
+  var id = $(this).data('id');
+  $('#innerContainer').empty();
+  // Rellena el contenedor
+  secciones.get({id:id},function(err,res){console.log(res)});
+  todos.find(function(error, todos) {
+    todos.forEach(addTodo);
+  });
+  ev.preventDefault();
+});
 
 //// VISTA ////
 vista.on('created', addCampo);
@@ -69,10 +98,34 @@ vista.on('created', addCampo);
 vista.on('removed', removeCampo);
 
 function addCampo(campo) {
- var campoHtml = document.createElement(campo.html);
- campoHtml.className="campo"+campo.id;
- campoHtml.innerText="relleno";
- $('.innerCampos').append(campoHtml);
+  
+}
+
+function addCampo(padres,campo) {
+  var tags = campo.tag.split(" ");
+  var campos = [];
+  campos.push(document.createElement(tags[0]));
+  var clases ="campo"+campo.id;
+  campo.clases.split(" ").forEach(function(cl){clases=clases+" "+cl;});
+  campos[0].className=clases;
+  campos[0].textContent=campo.text;
+  if (tags[0]=="input") {
+    campos[0].type=tags[1];
+    if (campos[1]=="checkbox") {
+      var label = document.createElement("label");
+      var acoplador=parseInt(Math.random()*1000000);
+      campos[0].id=acoplador;
+      label.htmlFor = acoplador;
+      label.textContent = campo.text;
+    }
+    campos.push(label);
+  }
+  if (tags[0]=="a") {
+    campos[0].href="#!";
+  }
+
+  console.log(campos);
+  $(padres).prepend(campos);
 }
 
 function removeCampo(campo) {
@@ -90,14 +143,16 @@ todos.on('removed', removeTodo);
 todos.on('patched', updateTodo);
 
 function addTodo(todo) {
- var html = '<li class="Campos collection-item col s12 m12" data-id="'+todo.id+'">'+
-       '<input id="checkbox'+todo.id+'"class="campo1" type="checkbox" name="done">'+
-       '<label class="campo2" for="checkbox'+todo.id+'"></label>'+
+  var acoplador = parseInt(Math.random()*1000000);
+  var e = $('<li class="Campos collection-item col s12 m12" data-id=0>'+
+       '<input  id="'+acoplador+'" class="campo1" type="checkbox" name="done">'+
+       '<label for="'+acoplador+'" class="campo2" ></label>'+
        '<div class="campo4"></div>'+
        '<a   class="campo3 delete" href="javascript://"><span class="material-icons right">delete</span></a>'+
-       '</li>';
- $('#innerContainer').prepend(html);
- updateTodo(todo);
+       '</li>');
+  e.attr('data-id',todo.id);
+  $('#innerContainer').prepend(e);
+  updateTodo(todo);
 }
 
 function updateTodo(todo) {
@@ -138,9 +193,3 @@ $('#innerContainer').on('click', '.campo1', function(ev) {
    $(this).attr('disabled', 'disabled');
    todos.patch(id,{complete: $(this).is(':checked')});
 });
-
-// Rellena el contenedor
-todos.find(function(error, todos) {
-  todos.forEach(addTodo);
-});
-
