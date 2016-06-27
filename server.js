@@ -20,6 +20,7 @@ var app = feathers()
 // Connect to the db, create and register a Feathers service.
 app.use('/todos', service({Model: db, name: 'todos'}));
 app.use('/campos', service({Model: db, name: 'campos'}));
+app.use('/secciones', service({Model: db, name: 'modulos'}));
 
 //// Hook con desactivación de trasporte
 //app.service('vista').before({
