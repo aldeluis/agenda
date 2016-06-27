@@ -59,7 +59,7 @@ bucleReloj();
 // todos.patch(1,{complete:true})
 
 //// SECCIONES ////
-$( document ).ready(function(){$(".button-collapse").sideNav({closeonClick:true});});
+$(document).ready(function(){$(".button-collapse").sideNav({closeOnClick:true})});
 secciones.on('created', addSeccion);
 secciones.on('removed', removeSeccion);
 
