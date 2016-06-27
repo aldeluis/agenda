@@ -23,7 +23,7 @@ db.schema.createTableIfNotExists('todos', function(table) {
       return db('todos').insert([
         // DATOS PREDEFINIDOS
         {text:"inserción automática 1", complete:true, created:new Date()},
-        {text:"inserción automática 2", complete:true, created:new Date()}
+        {text:"inserción automática 2", complete:true, created:new Date()},
         //
       ]);
     }
@@ -44,10 +44,11 @@ db.schema.createTableIfNotExists('modulos',function(table){
     if (r[0].count==0) {
       console.log("tabla modulos vacia, insertamos datos predefinidos");
       return db("modulos").insert([
-        {nombre:"Ficha de Fichas", ficha:"fichaFichas",    model:"Campos"},
-        {nombre:"Personas",        ficha:"fichaPersonas",  model:"Personas"},
-        {nombre:"Entidades",       ficha:"fichaEntidades", model:"Entidades"},
-        {nombre:"Eventos",         ficha:"fichaEventos",   model:"Eventos"},
+        {nombre:"Ficha de Fichas", ficha:"fichaFichas",    model:"campos"},
+        {nombre:"Todos"          , ficha:"fichaTodos" ,    model:"todos"},
+        {nombre:"Personas",        ficha:"fichaPersonas",  model:"personas"},
+        {nombre:"Entidades",       ficha:"fichaEntidades", model:"entidades"},
+        {nombre:"Eventos",         ficha:"fichaEventos",   model:"eventos"},
       ]);
     }
     else {
@@ -97,12 +98,11 @@ db.schema.createTableIfNotExists('campos',function(table){
 
 db.schema.createTableIfNotExists('vista',function(table){
   table.increments('id').primary();
-  table.string('ficha'); // ficha que hace referencia
-  table.string('model').index(); // modelo de la DB hace referencia
+  table.string('model'); // modelo de la DB hace referencia
   table.string('orden'); // orden en el que aparece
+  table.string('tag'); // tag
   table.string('campo'); // campo de la base de datos 
-  table.string('html'); // label
-  table.string('class'); // tipo de input del formulario
+  table.string('clases'); // clases que se le asocia. Automaticamente el id de esta tabla tambien.
   table.boolean('enlista'); // tipo de input del formulario
 })
 .then(function(){
@@ -110,9 +110,9 @@ db.schema.createTableIfNotExists('vista',function(table){
     if (r[0].count==0) {
       console.log("tabla vista vacia, insertamos datos predefinidos");
       return db("vista").insert([
-        {ficha:'fichaTodos', model:'todos', orden:'10', campo:'complete', html:'input', class:'checkbox', enlista:0},
-        {ficha:'fichaTodos', model:'todos', orden:'20', campo:'text',     html:'label', class:'',         enlista:0},
-        {ficha:'fichaTodos', model:'todos', orden:'30', campo:'',         html:'a',     class:'delete',   enlista:0},
+        {model:'todos', orden:'1', tag:'input checkbox', campo:'complete',clases:null,     enlista:1},
+        {model:'todos', orden:'2', tag:'label'         , campo:'text',    clases:null,     enlista:1},
+        {model:'todos', orden:'3', tag:'a'             , campo:'',        clases:'delete', enlista:1},
       ]);
     }
     else {
