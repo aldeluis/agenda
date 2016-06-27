@@ -4,6 +4,7 @@
   <title>Agenda</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
   <meta name="viewport" content="width=device-width, user-scalable=no">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
@@ -14,7 +15,16 @@
 </head>
 <body>
   <div class="container" id="todos">
-    <div id="cabecera"><span id="titulo">datos</span><span id="clientes"></span><span id="conexion"></span></div>
+
+    <nav>
+      <div class="nav-wrapper z-depth-0" >
+      <div id="conexion" class="clock right"></div>
+      <a href="#!" data-activates="mobile" class="button-collapse hide-on-med-and-up"><i class="material-icons">menu</i></a>
+      <ul id="desktop" class="left hide-on-small-only"></ul>
+      <ul id="mobile" class="side-nav"></ul>
+      </div>
+    </nav>
+
     <ul id="innerContainer" class="todos collection with-header"></ul>
     <div id="entrada">
       <form role="form" class="create-todo">
