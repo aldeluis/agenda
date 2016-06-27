@@ -5,7 +5,8 @@ var app = feathers()
 var todos = app.service('todos');
 var vista = app.service('vista');
 var campos = app.service('campos');
-var secciones = app.service('secciones');
+var modulos = app.service('modulos');
+var personas = app.service('personas');
 
 var laststate = null;
 // monitor de conexión con el color del header
@@ -58,24 +59,24 @@ bucleReloj();
 // todos.remove({id:1})
 // todos.patch(1,{complete:true})
 
-//// SECCIONES ////
+//// MODULOS ////
 $(document).ready(function(){$(".button-collapse").sideNav({closeOnClick:true})});
-secciones.on('created', addSeccion);
-secciones.on('removed', removeSeccion);
+modulos.on('created', addModulo);
+modulos.on('removed', removeModulo);
 
-function addSeccion(seccion) {
-  $('#mobile').prepend(" <li><a data-id='"+seccion.id+"' class='botonera' href='#!'>"+seccion.nombre+"</a></li>");
-  $('#desktop').prepend("<li><a data-id='"+seccion.id+"' class='botonera' href='#!'>"+seccion.nombre+"</a></li>");
+function addModulo(modulo) {
+  $('#mobile').prepend(" <li><a data-id='"+modulo.id+"' class='botonera' href='#!'>"+modulo.nombre+"</a></li>");
+  $('#desktop').prepend("<li><a data-id='"+modulo.id+"' class='botonera' href='#!'>"+modulo.nombre+"</a></li>");
 }
 
-function removeSeccion(seccion) {
-  $('#mobile #'+seccion.id).remove();
-  $('#desktop #'+seccion.id).remove();
+function removeModulo(modulo) {
+  $('#mobile #'+modulo.id).remove();
+  $('#desktop #'+modulo.id).remove();
 }
 
 // Rellena la botonera
-secciones.find(function(error, secciones) {
-  secciones.forEach(addSeccion);
+modulos.find(function(error, modulos) {
+  modulos.forEach(addModulo);
 });
 
 // click en botonera
@@ -85,9 +86,11 @@ $('nav').on('click', '.botonera', function (ev) {
   var id = $(this).data('id');
   $('#innerContainer').empty();
   // Rellena el contenedor
-  secciones.get({id:id},function(err,res){console.log(res)});
-  todos.find(function(error, todos) {
-    todos.forEach(addTodo);
+  modulos.get({id:id},function(err,res){
+    eval(res.model).find(function(err,res) {
+      res.forEach(addFilas);
+      addHeader();
+    });
   });
   ev.preventDefault();
 });
@@ -97,8 +100,28 @@ vista.on('created', addCampo);
 //vista.on('updates', updateCampo);
 vista.on('removed', removeCampo);
 
-function addCampo(campo) {
-  
+function addHeader() {
+  var h=[];
+  $(".fila:first-child span").each(function(){h.push($(this).attr('name'))});
+  html="<li class='fila cabecera'>";
+  h.forEach(function(hh){
+    html+="<span style='width:"+100/h.length+"%' name='"+hh+"'>"+hh+"</span>"
+  });
+  html+="</li>";
+  e=$(html);
+  $('#innerContainer').prepend(e);
+}
+
+function addFilas(campos) {
+  var l = Object.keys(campos).length;
+  html="<li class='fila'>";
+  jQuery.each(campos,function(n,v){
+    html+="<span style='width:"+Math.floor(100/l)+"%' name='"+n+"'>"+v+"</span>"
+  });
+  html+="</li>";
+  e=$(html);
+  e.attr('data-id',campos.id);
+  $('#innerContainer').prepend(e);
 }
 
 function addCampo(padres,campo) {
